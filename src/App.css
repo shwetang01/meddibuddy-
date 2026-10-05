@@ -6,8 +6,13 @@
 
 body {
   font-family: Arial, sans-serif;
-  background: #ffffff;
+  background: #fff;
   color: #172554;
+}
+
+button,
+input {
+  font-family: inherit;
 }
 
 .app {
@@ -21,6 +26,7 @@ body {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #eef2f7;
+  background: #fff;
 }
 
 .logo {
@@ -71,28 +77,10 @@ body {
   color: #d83b3b;
 }
 
-.hero p {
+.hero > p {
   margin-top: 28px;
   color: #8492ad;
   font-size: 18px;
-}
-
-@media (max-width: 700px) {
-  .navbar {
-    padding: 0 20px;
-  }
-
-  .navbar nav {
-    display: none;
-  }
-
-  .hero {
-    margin-top: 65px;
-  }
-
-  .hero h1 {
-    font-size: 42px;
-  }
 }
 
 .search-box {
@@ -115,8 +103,8 @@ body {
 
 .search-box input {
   flex: 1;
-  border: none;
-  outline: none;
+  border: 0;
+  outline: 0;
   background: transparent;
   color: #172554;
   font-size: 17px;
@@ -129,7 +117,7 @@ body {
 .search-box button {
   width: 56px;
   height: 56px;
-  border: none;
+  border: 0;
   border-radius: 50%;
   background: #2878d8;
   color: #fff;
@@ -148,11 +136,11 @@ body {
 }
 
 .popular button {
-  border: none;
+  border: 0;
   background: transparent;
   color: #52637e;
-  font-size: 14px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .popular button:hover {
@@ -163,21 +151,6 @@ body {
   margin-top: 55px;
   color: #9aa6b8;
   font-size: 13px;
-}
-
-@media (max-width: 700px) {
-  .search-box {
-    height: 64px;
-  }
-
-  .search-box button {
-    width: 48px;
-    height: 48px;
-  }
-
-  .popular {
-    gap: 12px;
-  }
 }
 
 .results {
@@ -213,6 +186,7 @@ body {
   border: 1px solid #e4eaf2;
   border-radius: 18px;
   background: #fff;
+  cursor: pointer;
   box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
   transition: 0.2s ease;
 }
@@ -264,7 +238,8 @@ body {
   gap: 6px;
 }
 
-.medicine-info span {
+.medicine-info span,
+.detail-grid span {
   color: #94a3b8;
   font-size: 12px;
   text-transform: uppercase;
@@ -280,7 +255,7 @@ body {
 .details-button {
   margin-top: 24px;
   padding: 9px 14px;
-  border: none;
+  border: 0;
   border-radius: 8px;
   background: #eef5ff;
   color: #216bd0;
@@ -322,7 +297,148 @@ body {
   }
 }
 
+.detail-page {
+  max-width: 1000px;
+  margin: 55px auto;
+  padding: 0 25px 70px;
+}
+
+.back-button {
+  margin-bottom: 25px;
+  border: 0;
+  background: transparent;
+  color: #216bd0;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.disclaimer {
+  padding: 20px 24px;
+  margin-bottom: 45px;
+  border-radius: 14px;
+  background: #eaf4ff;
+  color: #31577e;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.detail-header {
+  margin-bottom: 40px;
+}
+
+.detail-header h1 {
+  color: #172554;
+  font-size: 48px;
+  line-height: 1.15;
+}
+
+.detail-header p {
+  margin-top: 10px;
+  color: #405a83;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.detail-header span {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  background: #edf5ff;
+  color: #496987;
+  font-size: 14px;
+}
+
+.detail-card {
+  padding: 28px;
+  margin-bottom: 38px;
+  border: 1px solid #e4eaf2;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.warning {
+  background: #fffaf1;
+  border-color: #f1dfb9;
+}
+
+.warning h2 {
+  color: #9a5b17;
+}
+
+.warning p {
+  margin-top: 14px;
+  color: #64748b;
+  line-height: 1.7;
+}
+
+.detail-section {
+  padding: 25px 0;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.detail-section h2 {
+  margin-bottom: 14px;
+  color: #172554;
+  font-size: 23px;
+}
+
+.detail-section > p {
+  color: #64748b;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.detail-grid div {
+  padding: 18px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.detail-grid span {
+  display: block;
+  margin-bottom: 7px;
+}
+
+.detail-grid strong {
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 @media (max-width: 700px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .navbar nav {
+    display: none;
+  }
+
+  .hero {
+    margin-top: 65px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+  .search-box {
+    height: 64px;
+  }
+
+  .search-box button {
+    width: 48px;
+    height: 48px;
+  }
+
   .medicine-grid {
     grid-template-columns: 1fr;
   }
@@ -333,5 +449,17 @@ body {
 
   .results-heading h2 {
     font-size: 30px;
+  }
+
+  .detail-page {
+    margin-top: 35px;
+  }
+
+  .detail-header h1 {
+    font-size: 36px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
   }
 }

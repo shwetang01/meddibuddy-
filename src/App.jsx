@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
+
+const cache = new Map();
 
 function App() {
   const [query, setQuery] = useState("");
   const [medicines, setMedicines] = useState([]);
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const controllerRef = useRef(null);
+
+  const getValue = (data, field) => {
+    return data?.[field]?.[0] || "Information not available.";
+  };
 
   const searchMedicine = async (value = query) => {
     const search = value.trim();
@@ -16,15 +24,31 @@ function App() {
       return;
     }
 
+    if (controllerRef.current) {
+      controllerRef.current.abort();
+    }
+
+    if (cache.has(search.toLowerCase())) {
+      setMedicines(cache.get(search.toLowerCase()));
+      setError("");
+      return;
+    }
+
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
     setLoading(true);
     setError("");
+    setSelectedMedicine(null);
 
     try {
       const url = `https://api.fda.gov/drug/label.json?search=openfda.brand_name:${encodeURIComponent(
         search
       )}&limit=20`;
 
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        signal: controller.signal
+      });
 
       if (response.status === 404) {
         setMedicines([]);
@@ -33,36 +57,193 @@ function App() {
       }
 
       if (!response.ok) {
-        throw new Error("Unable to fetch medicines.");
+        throw new Error();
       }
 
       const data = await response.json();
-      setMedicines(data.results || []);
+      const results = data.results || [];
 
-      if (!data.results?.length) {
+      cache.set(search.toLowerCase(), results);
+      setMedicines(results);
+
+      if (!results.length) {
         setError("No results found.");
       }
-    } catch {
-      setMedicines([]);
-      setError("Unable to load medicines. Please try again.");
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        setMedicines([]);
+        setError("Unable to load medicines. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    searchMedicine();
+  const openDetails = (medicine) => {
+    const brand = medicine.openfda?.brand_name?.[0];
+
+    if (!brand) return;
+
+    setSelectedMedicine(medicine);
+    window.history.pushState(
+      {},
+      "",
+      `?medicine=${encodeURIComponent(brand)}`
+    );
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const goBack = () => {
+    setSelectedMedicine(null);
+    window.history.pushState({}, "", window.location.pathname);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const medicine = params.get("medicine");
+
+    if (!medicine) return;
+
+    const loadMedicine = async () => {
+      setLoading(true);
+
+      try {
+        const url = `https://api.fda.gov/drug/label.json?search=openfda.brand_name:${encodeURIComponent(
+          medicine
+        )}&limit=1`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error();
+        }
+
+        const data = await response.json();
+
+        if (data.results?.length) {
+          setSelectedMedicine(data.results[0]);
+        } else {
+          setError("Medicine details could not be found.");
+        }
+      } catch {
+        setError("Unable to load medicine details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMedicine();
+  }, []);
+
   const popular = ["Advil", "Ibuprofen", "Aspirin", "Paracetamol"];
+
+  if (selectedMedicine) {
+    const brand = getValue(selectedMedicine.openfda, "brand_name");
+    const generic = getValue(selectedMedicine.openfda, "generic_name");
+    const manufacturer = getValue(
+      selectedMedicine.openfda,
+      "manufacturer_name"
+    );
+
+    return (
+      <div className="app">
+        <header className="navbar">
+          <div className="logo">
+            <span className="logo-icon"></span>
+            <span>Meddibuddy</span>
+          </div>
+
+          <nav>
+            <a href="#" onClick={goBack}>Medicines</a>
+            <a href="#health">Health Information</a>
+            <a href="#doctor">Consult a Doctor</a>
+          </nav>
+        </header>
+
+        <main className="detail-page">
+          <button className="back-button" onClick={goBack}>
+            ← Back to Search
+          </button>
+
+          <div className="disclaimer">
+            <strong>Important Disclaimer:</strong> The information on this
+            page is sourced directly from the US FDA Label Database.
+            Formulations, dosage conventions, active ingredients, and
+            regulatory language may differ by country. Always consult a
+            healthcare provider before use.
+          </div>
+
+          <section className="detail-header">
+            <h1>{brand}</h1>
+            <p>{generic}</p>
+            <span>Manufactured by {manufacturer}</span>
+          </section>
+
+          <section className="detail-card warning">
+            <h2>⚠ Warnings & Safety Info</h2>
+            <p>
+              {getValue(selectedMedicine, "warnings")}
+            </p>
+          </section>
+
+          <section className="detail-section">
+            <h2>Active Ingredients</h2>
+            <p>
+              {getValue(selectedMedicine, "active_ingredient")}
+            </p>
+          </section>
+
+          <section className="detail-section">
+            <h2>Purpose & Indications</h2>
+            <p>
+              {getValue(selectedMedicine, "purpose")}
+            </p>
+          </section>
+
+          <section className="detail-section">
+            <h2>Dosage and Administration</h2>
+            <p>
+              {getValue(selectedMedicine, "dosage_and_administration")}
+            </p>
+          </section>
+
+          <section className="detail-section">
+            <h2>Product Information</h2>
+
+            <div className="detail-grid">
+              <div>
+                <span>Product Type</span>
+                <strong>
+                  {getValue(selectedMedicine.openfda, "product_type")}
+                </strong>
+              </div>
+
+              <div>
+                <span>Route</span>
+                <strong>
+                  {getValue(selectedMedicine.openfda, "route")}
+                </strong>
+              </div>
+
+              <div>
+                <span>Manufacturer</span>
+                <strong>{manufacturer}</strong>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app">
       <header className="navbar">
         <div className="logo">
-          
-          <span>Meddibuddy</span>
+          <span className="logo-icon">✦</span>
+          <span>NxtWave</span>
         </div>
 
         <nav>
@@ -82,9 +263,14 @@ function App() {
 
           <p>Search medicines by brand name or active ingredient.</p>
 
-          <form className="search-box" onSubmit={handleSubmit}>
+          <form
+            className="search-box"
+            onSubmit={(e) => {
+              e.preventDefault();
+              searchMedicine();
+            }}
+          >
             <input
-              type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search by medicine name or active ingredient"
@@ -149,16 +335,12 @@ function App() {
                     medicine.openfda?.manufacturer_name?.[0] ||
                     "Not available";
 
-                  const productType =
-                    medicine.openfda?.product_type?.[0] ||
-                    "Not available";
-
-                  const route =
-                    medicine.openfda?.route?.[0] ||
-                    "Not available";
-
                   return (
-                    <article className="medicine-card" key={index}>
+                    <article
+                      className="medicine-card"
+                      key={index}
+                      onClick={() => openDetails(medicine)}
+                    >
                       <div className="card-top">
                         <div className="medicine-icon">💊</div>
 
@@ -176,16 +358,29 @@ function App() {
 
                         <div>
                           <span>Product Type</span>
-                          <strong>{productType}</strong>
+                          <strong>
+                            {getValue(
+                              medicine.openfda,
+                              "product_type"
+                            )}
+                          </strong>
                         </div>
 
                         <div>
                           <span>Route</span>
-                          <strong>{route}</strong>
+                          <strong>
+                            {getValue(medicine.openfda, "route")}
+                          </strong>
                         </div>
                       </div>
 
-                      <button className="details-button">
+                      <button
+                        className="details-button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDetails(medicine);
+                        }}
+                      >
                         View full details →
                       </button>
                     </article>
