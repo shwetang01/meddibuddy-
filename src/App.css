@@ -94,3 +94,88 @@ body {
     font-size: 42px;
   }
 }
+
+.search-box {
+  max-width: 800px;
+  height: 74px;
+  margin: 48px auto 25px;
+  padding: 7px 9px 7px 28px;
+  display: flex;
+  align-items: center;
+  border: 2px solid #75a9ed;
+  border-radius: 40px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.08);
+}
+
+.search-box:focus-within {
+  border-color: #2878d8;
+  box-shadow: 0 8px 35px rgba(37, 99, 235, 0.15);
+}
+
+.search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #172554;
+  font-size: 17px;
+}
+
+.search-box input::placeholder {
+  color: #b1bdcf;
+}
+
+.search-box button {
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: #2878d8;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.popular {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  color: #8b98ad;
+  font-size: 14px;
+}
+
+.popular button {
+  border: none;
+  background: transparent;
+  color: #52637e;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.popular button:hover {
+  color: #216bd0;
+}
+
+.notice {
+  margin-top: 55px;
+  color: #9aa6b8;
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .search-box {
+    height: 64px;
+  }
+
+  .search-box button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .popular {
+    gap: 12px;
+  }
+}
