@@ -179,3 +179,159 @@ body {
     gap: 12px;
   }
 }
+
+.results {
+  max-width: 1100px;
+  margin: 80px auto;
+  padding: 0 25px;
+}
+
+.results-heading {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.results-heading h2 {
+  color: #172554;
+  font-size: 38px;
+}
+
+.results-heading p {
+  margin-top: 12px;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.medicine-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.medicine-card {
+  padding: 25px;
+  border: 1px solid #e4eaf2;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+  transition: 0.2s ease;
+}
+
+.medicine-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.medicine-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #edf5ff;
+  font-size: 22px;
+}
+
+.card-top h3 {
+  color: #172554;
+  font-size: 20px;
+}
+
+.card-top p {
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.medicine-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #edf1f5;
+}
+
+.medicine-info div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.medicine-info span {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.medicine-info strong {
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.details-button {
+  margin-top: 24px;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #eef5ff;
+  color: #216bd0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.details-button:hover {
+  background: #e1efff;
+}
+
+.status {
+  min-height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  color: #64748b;
+}
+
+.error-message {
+  color: #b45353;
+}
+
+.loader {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #dbeafe;
+  border-top-color: #2878d8;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
+  .medicine-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .medicine-info {
+    grid-template-columns: 1fr;
+  }
+
+  .results-heading h2 {
+    font-size: 30px;
+  }
+}
